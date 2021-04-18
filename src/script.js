@@ -2,29 +2,6 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-//Texture
-
-const loadingManager = new THREE.LoadingManager()
-
-loadingManager.onStart = () => {
-
-}
-loadingManager.onLoad = () => {
-    
-}
-loadingManager.onProgress = () => {
-    
-}
-loadingManager.onError = () => {
-    
-}
-
-const textureLoader = new THREE.TextureLoader(loadingManager)
-const colorTexture = textureLoader.load('/textures/minecraft.png')
-
-colorTexture.magFilter = THREE.NearestFilter
-
-
 /**
  * Base
  */
@@ -33,14 +10,6 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-
-/**
- * Object
- */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ map: colorTexture })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
 
 /**
  * Sizes
@@ -72,7 +41,7 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 1
+camera.position.z = 2
 scene.add(camera)
 
 // Controls
