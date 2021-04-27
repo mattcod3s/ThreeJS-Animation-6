@@ -40,6 +40,10 @@ material.roughness = 0.7
 gui.add(material, 'metalness').min(0).max(1).step(0.001)
 gui.add(material, 'roughness').min(0).max(1).step(0.001)
 
+/*need to do sometihng for hithub so this is usesells*/
+console.log('hi')
+
+
 /**
  * Objects
  */
