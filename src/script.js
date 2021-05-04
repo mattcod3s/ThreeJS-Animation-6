@@ -25,6 +25,16 @@ const cube = new THREE.Mesh(
 scene.add(cube)
 
 /**
+ * Test cube
+ */
+ const cube2 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial()
+)
+scene.add(cube2)
+
+
+/**
  * Sizes
  */
 const sizes = {
