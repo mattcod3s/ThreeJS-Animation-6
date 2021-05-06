@@ -42,13 +42,13 @@ scene.add(object1, object2, object3)
  */
 const raycaster = new THREE.Raycaster()
 
-const rayOrigin = new THREE.Vector3(-3, 0, 0)
-const rayDirection = new THREE.Vector3(10, 0, 0)
-rayDirection.normalize()
-raycaster.set(rayOrigin, rayDirection)
+// const rayOrigin = new THREE.Vector3(-3, 0, 0)
+// const rayDirection = new THREE.Vector3(10, 0, 0)
+// rayDirection.normalize()
+// raycaster.set(rayOrigin, rayDirection)
 
-const intersect = raycaster.intersectObject(object2)
-const intersects = raycaster.intersectObjects([object1, object2, object3])
+// const intersect = raycaster.intersectObject(object2)
+// const intersects = raycaster.intersectObjects([object1, object2, object3])
 
 
 /**
@@ -103,6 +103,28 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Animation
+    const objectsToTest = [object1, object2, object3]
+    object1.position.y = Math.sin(elapsedTime * 3) * 1.5
+    object2.position.y = Math.sin(elapsedTime * -2) * 1.5
+    object3.position.y = Math.sin(elapsedTime * 1.2) * 1.5
+
+    const rayOrigin = new THREE.Vector3(-3, 0, 0)
+    const rayDirection = new THREE.Vector3(10, 0, 0)
+    rayDirection.normalize()
+    raycaster.set(rayOrigin, rayDirection)
+
+    //const intersect = raycaster.intersectObject(object2)
+    const intersects = raycaster.intersectObjects(objectsToTest)
+    
+    for(const object of objectsToTest) {
+        object.material.color.set('#ff0000')
+    }
+
+    for(const intersect of intersects) {
+        intersect.object.material.color.set('#0000ff')
+    }
 
     // Update controls
     controls.update()
