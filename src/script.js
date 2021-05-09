@@ -2,7 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-import  CANNON, { Body } from 'cannon'
+import  * as CANNON from 'cannon-es'
 
 /**
  * Debug
@@ -15,9 +15,20 @@ debugObject.createSphere = () => {
 debugObject.createBox = () => {
     createBox(Math.random(),Math.random(),Math.random(), {x: (Math.random() -0.5) * 3 , y: 3, z: (Math.random() - 0.5) * 3})
 }
+debugObject.reset = () => {
+   for(const object of objectsToUpdate) {
+       //Remove Body
+       object.body.removeEventListener('collide', playSound)
+       world.removeBody(object.body)
 
+       //Remove Mesh
+       scene.remove(object.mesh)
+   }
+}
 gui.add(debugObject, 'createSphere')
 gui.add(debugObject, 'createBox')
+gui.add(debugObject, 'reset')
+
 
 
 /**
@@ -28,6 +39,22 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/**
+ * Sounds
+ */
+const hitSound = new Audio('/sounds/hit.mp3')
+
+const playSound = (collision) => {
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal()
+
+    if (impactStrength > 1.5) {
+        hitSound.volume = Math.random()
+        hitSound.currentTime = 0
+        hitSound.play()
+    }
+    
+}
 
 /**
  * Textures
@@ -50,6 +77,8 @@ const environmentMapTexture = cubeTextureLoader.load([
 
 //World
 const world = new CANNON.World()
+world.broadphase = new CANNON.SAPBroadphase(world)
+world.allowSleep = true
 world.gravity.set(0, -9.82, 0)
 
 // Materials
@@ -198,6 +227,7 @@ const createSphere = (radius, position) => {
         material: defaultMaterial
     })
     body.position.copy(position)
+    body.addEventListener('collide', playSound)
     world.addBody(body)
 
 
@@ -229,6 +259,7 @@ const createBox = (width, height, depth, position) => {
         material: defaultMaterial
     })
     body.position.copy(position)
+    body.addEventListener('collide', playSound)
     world.addBody(body)
 
 
@@ -262,6 +293,7 @@ const tick = () =>
 
     for(const object of objectsToUpdate) {
         object.mesh.position.copy(object.body.position)
+        object.mesh.quaternion.copy(object.body.quaternion)
     }
 
     // Render
