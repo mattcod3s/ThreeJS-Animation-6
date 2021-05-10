@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 /**
  * Base
@@ -14,6 +15,37 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/*
+ * Models
+ */
+const gltfLoader = new GLTFLoader()
+gltfLoader.load(
+    '/models/Duck/glTF-Draco/Duck.gltf', 
+    (gltf) => {
+        scene.add(gltf.scene)
+        // while(gltf.scene.children.length) {
+        //     scene.add(gltf.scene.children[0])
+        // }
+        // const children = [...gltf.scene.children]
+        // for(const child of children) {
+        //     scene.add(child)
+        // }
+    }
+)
+// gltfLoader.load(
+//     '/models/Duck/glTF-binary/Duck.glb', 
+//     (gltf) => {
+//         scene.add(gltf.scene.children[0])
+//     }
+// )
+// gltfLoader.load(
+//     '/models/Duck/glTF-Embedded/Duck.gltf', 
+//     (gltf) => {
+//         scene.add(gltf.scene.children[0])
+//     }
+// )
+
 
 /**
  * Floor
