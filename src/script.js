@@ -16,7 +16,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-
+let mixer = null
 /*
  * Models
  */
@@ -26,8 +26,13 @@ dracoLoader.setDecoderPath('/draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 gltfLoader.load(
-    '/models/Duck/glTF-Draco/Duck.gltf', 
+    '/models/Fox/glTF/Fox.gltf', 
     (gltf) => {
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[2])
+        action.play()
+
+        gltf.scene.scale.set(0.025, 0.025, 0.025)
         scene.add(gltf.scene)
         //  while(gltf.scene.children.length) {
         //      scene.add(gltf.scene.children[0])
@@ -145,6 +150,12 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
+    // Update Mixer
+    if(mixer != null) {
+        mixer.update(deltaTime)
+    }
+    
+
     // Update controls
     controls.update()
 
@@ -153,6 +164,8 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+
+    
 }
 
 tick()
