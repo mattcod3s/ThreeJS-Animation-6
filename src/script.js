@@ -1,9 +1,9 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import * as dat from 'dat.gui'
 
 /**
  * Base
@@ -16,8 +16,8 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-let mixer = null
-/*
+
+/**
  * Models
  */
 const dracoLoader = new DRACOLoader()
@@ -25,45 +25,24 @@ dracoLoader.setDecoderPath('/draco/')
 
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
-gltfLoader.load(
-    '/models/Fox/glTF/Fox.gltf', 
-    (gltf) => {
-        mixer = new THREE.AnimationMixer(gltf.scene)
-        const action = mixer.clipAction(gltf.animations[2])
-        action.play()
 
-        gltf.scene.scale.set(0.025, 0.025, 0.025)
+let mixer = null
+
+
+//Only commented until we finish blender model
+/*gltfLoader.load(
+    '/models/hamburger.glb',
+    (gltf) =>
+    {
         scene.add(gltf.scene)
-        //  while(gltf.scene.children.length) {
-        //      scene.add(gltf.scene.children[0])
-        //  }
-        //  const children = [...gltf.scene.children]
-        //  for(const child of children) {
-        //      scene.add(child)
-        //  }
     }
-)
-
-
-// gltfLoader.load(
-//     '/models/Duck/glTF-binary/Duck.glb', 
-//     (gltf) => {
-//         scene.add(gltf.scene.children[0])
-//     }
-// )
-// gltfLoader.load(
-//     '/models/Duck/glTF-Embedded/Duck.gltf', 
-//     (gltf) => {
-//         scene.add(gltf.scene.children[0])
-//     }
-// )
-
+)*/
 
 /**
  * Floor
  */
 const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
+    new THREE.PlaneGeometry(50, 50),
     new THREE.MeshStandardMaterial({
         color: '#444444',
         metalness: 0,
@@ -119,12 +98,12 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(2, 2, 2)
+camera.position.set(- 8, 4, 8)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-controls.target.set(0, 0.75, 0)
+controls.target.set(0, 1, 0)
 controls.enableDamping = true
 
 /**
@@ -150,11 +129,10 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
-    // Update Mixer
-    if(mixer != null) {
+    if(mixer)
+    {
         mixer.update(deltaTime)
     }
-    
 
     // Update controls
     controls.update()
@@ -164,8 +142,6 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-
-    
 }
 
 tick()
