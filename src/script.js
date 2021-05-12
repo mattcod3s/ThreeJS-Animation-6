@@ -29,14 +29,14 @@ gltfLoader.setDRACOLoader(dracoLoader)
 let mixer = null
 
 
-//Only commented until we finish blender model
-/*gltfLoader.load(
-    '/models/hamburger.glb',
+// Blender burger finished and imported
+gltfLoader.load(
+    '/models/untitledburger.glb',
     (gltf) =>
     {
         scene.add(gltf.scene)
     }
-)*/
+)
 
 /**
  * Floor
