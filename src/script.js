@@ -2,14 +2,12 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
-import testVertexShader from './shaders/test/vertex.glsl'
-import testFragmentShader from './shaders/test/fragment.glsl'
 
 /**
  * Base
  */
 // Debug
-const gui = new dat.GUI()
+const gui = new dat.GUI({ width: 340 })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -18,21 +16,18 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Test mesh
+ * Water
  */
 // Geometry
-const geometry = new THREE.PlaneGeometry(1, 1, 32, 32)
+const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
 
 // Material
-const material = new THREE.ShaderMaterial({
-    vertexShader: testVertexShader,
-    fragmentShader: testFragmentShader,
-    side: THREE.DoubleSide
-})
+const waterMaterial = new THREE.MeshBasicMaterial()
 
 // Mesh
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+const water = new THREE.Mesh(waterGeometry, waterMaterial)
+water.rotation.x = - Math.PI * 0.5
+scene.add(water)
 
 /**
  * Sizes
@@ -62,7 +57,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0.25, - 0.25, 1)
+camera.position.set(1, 1, 1)
 scene.add(camera)
 
 // Controls
@@ -81,8 +76,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * Animate
  */
+const clock = new THREE.Clock()
+
 const tick = () =>
 {
+    const elapsedTime = clock.getElapsedTime()
+
     // Update controls
     controls.update()
 
