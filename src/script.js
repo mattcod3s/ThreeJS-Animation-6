@@ -2,6 +2,8 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import galaxyFragmentShader from './shaders/galaxy/fragment.glsl'
+import galaxyVertexShader from './shaders/galaxy/vertex.glsl'
 
 /**
  * Base
@@ -22,7 +24,7 @@ const parameters = {
     size: 0.01,
     radius: 5,
     branches: 3,
-    spin: 1,
+    spin: 0,
     randomness: 0.2,
     randomnessPower: 3,
     insideColor: '#ff6030',
@@ -46,6 +48,7 @@ const generateGalaxy = () => {
     geometry = new THREE.BufferGeometry()
     const positions = new Float32Array(parameters.count * 3)
     const colors = new Float32Array(parameters.count * 3)
+    const scales = new Float32Array(parameters.count * 1)
 
     const colorInside = new THREE.Color(parameters.insideColor)
     const colorOutside = new THREE.Color(parameters.outsideColor)
@@ -74,18 +77,27 @@ const generateGalaxy = () => {
         colors[i3+1] = mixedColor.g
         colors[i3+2] = mixedColor.b
 
+        //Scales
+        scales[i] = Math.random()
+
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
 
     // Material
-    material = new THREE.PointsMaterial({
-        size: parameters.size,
-        sizeAttenuation: true,
+    material = new THREE.ShaderMaterial({
+        // size: parameters.size,
+        // sizeAttenuation: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
-        vertexColors: true
+        vertexColors: true,
+        vertexShader: galaxyVertexShader,
+        fragmentShader: galaxyFragmentShader,
+        uniforms: {
+            uSize: {value: 5 * renderer.getPixelRatio()}
+        }
     })
 
     //Points
@@ -94,10 +106,10 @@ const generateGalaxy = () => {
 
 }
 
-generateGalaxy()
+
 
 gui.add(parameters, 'count').min(100).max(1000000).step(100).onFinishChange(generateGalaxy);
-gui.add(parameters, 'size').min(0.001).max(0.1).step(0.001).onFinishChange(generateGalaxy);
+gui.add(parameters, 'size').min(0.001).max(10).step(0.001).onFinishChange(generateGalaxy);
 gui.add(parameters, 'radius').min(0.01).max(20).step(0.01).onFinishChange(generateGalaxy);
 gui.add(parameters, 'branches').min(2).max(20).step(1).onFinishChange(generateGalaxy);
 gui.add(parameters, 'spin').min(-5).max(5).step(0.1).onFinishChange(generateGalaxy);
@@ -151,6 +163,8 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+generateGalaxy()
 
 /**
  * Animate
